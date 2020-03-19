@@ -42,6 +42,15 @@ public class PusherPlugin implements Plugin, PacketInterceptor
 {
     private final static Logger Log = LoggerFactory.getLogger(PusherPlugin.class);
 
+    String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getProperty("pusher.google.fcm.path", "");
+    String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
+
+    String APNS_PKCS8_FILE_PATH = JiveGlobals.getProperty("pusher.apple.apns.path", "");
+    String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
+    String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
+    String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
+    Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty("pusher.apple.apns.sandbox");
+
     XMPPServer xmppServer;
     InterceptorManager interceptorManager;
     UserManager userManager;
@@ -50,12 +59,6 @@ public class PusherPlugin implements Plugin, PacketInterceptor
     @Override
     public void interceptPacket(Packet packet, Session session, boolean incoming, boolean processed) throws PacketRejectedException
     {
-        String APNS_PKCS8_FILE_PATH = JiveGlobals.getProperty("pusher.apple.apns.path", "");
-        String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
-        String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
-        String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
-        Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty("pusher.apple.apns.sandbox");
-
         if (!processed || !incoming || !(packet instanceof Message))
         {
             return;
@@ -240,9 +243,6 @@ public class PusherPlugin implements Plugin, PacketInterceptor
     public void initializePlugin(PluginManager manager, File pluginDirectory)
     {
         Log.debug("Push notification plugin is initalizing");
-
-        String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getProperty("pusher.google.fcm.path", "");
-        String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
 
         xmppServer = XMPPServer.getInstance();
 
