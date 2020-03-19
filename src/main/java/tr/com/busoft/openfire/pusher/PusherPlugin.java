@@ -129,10 +129,10 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
     {
         Connection dbconnection = null;
         Statement statement = null;
+        ResultSet resultSet = null;
         try
         {
             dbconnection = DbConnectionManager.getConnection();
-
 
             JID sender = message.getFrom();
             String senderUsername = sender.getNode();
@@ -142,11 +142,12 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
             JID receiver = message.getTo();
             String receiverUsername = receiver.getNode();
             String receiverResource = receiver.getResource();
+
             Log.debug("User :" + receiverUsername + ": is not online, push notification will be sent");
 
             String sql = String.format("SELECT token FROM ofPusher WHERE username = '%s' AND resource = '%s'", receiverUsername, receiverResource);
             statement = dbconnection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            resultSet = statement.executeQuery(sql);
 
             resultSet.next();
             String token = resultSet.getString("token");
@@ -212,6 +213,7 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
             {
                 dbconnection.close();
                 statement.close();
+                resultSet.close();
             }
             catch (Exception exception)
             {
