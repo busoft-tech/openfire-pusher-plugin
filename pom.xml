@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>plugins</artifactId>
+    <groupId>org.igniterealtime.openfire</groupId>
+    <version>4.4.4</version>
+  </parent>
+
+  <groupId>tr.com.busoft.openfire</groupId>
+  <artifactId>pusher</artifactId>
+  <version>0.0.1</version>
+
+  <name>Pusher Plugin</name>
+  <description>Push Notification Plugin</description>
+
+  <repositories>
+    <!-- Where we obtain dependencies. -->
+    <repository>
+      <id>igniterealtime</id>
+      <name>Ignite Realtime Repository</name>
+      <url>https://igniterealtime.org/archiva/repository/maven/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>us.raudi</groupId>
+      <artifactId>pushraven</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.eatthepath</groupId>
+      <artifactId>pushy</artifactId>
+      <version>0.13.11</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
