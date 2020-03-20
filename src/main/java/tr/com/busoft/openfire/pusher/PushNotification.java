@@ -147,9 +147,7 @@ public class PushNotification implements OfflineMessageListener
         {
             try
             {
-                dbconnection.close();
-                statement.close();
-                resultSet.close();
+                DbConnectionManager.closeConnection(resultSet, statement, dbconnection);
             }
             catch (Exception exception)
             {

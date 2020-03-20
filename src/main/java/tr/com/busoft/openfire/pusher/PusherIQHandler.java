@@ -1,7 +1,6 @@
 package tr.com.busoft.openfire.pusher;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.dom4j.Element;
@@ -9,7 +8,6 @@ import org.jivesoftware.database.DbConnectionManager;
 import org.jivesoftware.openfire.IQHandlerInfo;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.jivesoftware.openfire.handler.IQHandler;
-import org.jivesoftware.openfire.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmpp.packet.IQ;
@@ -32,11 +30,6 @@ public class PusherIQHandler extends IQHandler
     public IQ handleIQ(IQ packet) throws UnauthorizedException
     {
         final IQ result = IQ.createResultIQ(packet);
-        if (!UserManager.getInstance().isRegisteredUser(packet.getFrom()))
-        {
-            Log.debug("User is not registered: {}", packet.getFrom());
-            throw new UnauthorizedException();
-        }
 
         if (packet.isResponse())
         {
@@ -66,32 +59,19 @@ public class PusherIQHandler extends IQHandler
                     return result;
                 }
 
-                Connection connection = null;
+                Connection dbConnection = null;
                 Statement statement = null;
-                ResultSet resultSet = null;
                 try
                 {
-                    connection = DbConnectionManager.getConnection();
-                    statement = connection.createStatement();
+                    dbConnection = DbConnectionManager.getConnection();
+                    statement = dbConnection.createStatement();
 
                     JID sender = packet.getFrom();
                     String senderUsername = sender.getNode();
                     String resource = sender.getResource();
                     String token = tokenNode.getStringValue();
 
-                    String sql = String.format("SELECT 1 FROM ofPusher WHERE username = '%s' AND resource = '%s'", senderUsername, resource);
-                    resultSet = statement.executeQuery(sql);
-
-                    boolean exist = resultSet.next();
-                    if (exist)
-                    {
-                        sql = String.format("UPDATE ofPusher SET token = '%s' WHERE username = '%s' AND resource = '%s'", token, senderUsername, resource);
-                    }
-                    else
-                    {
-                        sql = String.format("INSERT INTO ofPusher (username, resource, token) VALUES ('%s', '%s', '%s')", senderUsername, resource, token);
-                    }
-
+                    String sql = String.format("INSERT INTO ofPusher (username, resource, token) VALUES ('%s', '%s', '%s') ON DUPLICATE KEY UPDATE token = VALUES(token)", senderUsername, resource, token);
                     statement.executeUpdate(sql);
                 }
                 catch (Exception exception)
@@ -103,9 +83,7 @@ public class PusherIQHandler extends IQHandler
                 {
                     try
                     {
-                        connection.close();
-                        statement.close();
-                        resultSet.close();
+                        DbConnectionManager.closeConnection(statement, dbConnection);
                     }
                     catch (Exception exception)
                     {
@@ -117,12 +95,12 @@ public class PusherIQHandler extends IQHandler
             }
             case "disable":
             {
-                Connection connection = null;
+                Connection dbConnection = null;
                 Statement statement = null;
                 try
                 {
-                    connection = DbConnectionManager.getConnection();
-                    statement = connection.createStatement();
+                    dbConnection = DbConnectionManager.getConnection();
+                    statement = dbConnection.createStatement();
 
                     JID sender = packet.getFrom();
                     String senderUsername = sender.getNode();
@@ -140,8 +118,7 @@ public class PusherIQHandler extends IQHandler
                 {
                     try
                     {
-                        connection.close();
-                        statement.close();
+                        DbConnectionManager.closeConnection(statement, dbConnection);
                     }
                     catch (Exception exception)
                     {
