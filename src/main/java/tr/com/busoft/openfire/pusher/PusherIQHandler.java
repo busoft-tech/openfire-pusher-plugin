@@ -79,7 +79,19 @@ public class PusherIQHandler extends IQHandler
                     String resource = sender.getResource();
                     String token = tokenNode.getStringValue();
 
-                    String sql = String.format("INERT INTO ofPusher (username, resource, token) VALUES '%s', '%s', '%s'", senderUsername, resource, token);
+                    String sql = String.format("SELECT FROM ofPusher WHERE username = '%s' AND resource = '%s'", senderUsername, resource);
+                    resultSet = statement.executeQuery(sql);
+
+                    boolean exist = resultSet.next();
+                    resultSet.close();
+                    if (exist)
+                    {
+                        sql = String.format("UPDATE ofPusher SET token = '%s' WHERE username = '%s' AND resource = '%s'", token, senderUsername, resource);
+                    }
+                    else
+                    {
+                        sql = String.format("INSERT INTO ofPusher (username, resource, token) VALUES '%s', '%s', '%s'", senderUsername, resource, token);
+                    }
 
                     resultSet = statement.executeQuery(sql);
                 }
