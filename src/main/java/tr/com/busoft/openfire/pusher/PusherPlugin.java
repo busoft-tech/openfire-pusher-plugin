@@ -16,6 +16,7 @@ import com.eatthepath.pushy.apns.util.concurrent.PushNotificationFuture;
 
 import org.jivesoftware.database.DbConnectionManager;
 import org.jivesoftware.openfire.OfflineMessageListener;
+import org.jivesoftware.openfire.OfflineMessageStrategy;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
 import org.jivesoftware.util.JiveGlobals;
@@ -34,13 +35,13 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
 {
     private final static Logger Log = LoggerFactory.getLogger(PusherPlugin.class);
 
-    private final static String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getProperty("pusher.google.fcm.path", "");
-    private final static String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
-    private final static String APNS_PKCS8_FILE_PATH = JiveGlobals.getProperty("pusher.apple.apns.path", "");
-    private final static String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
-    private final static String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
-    private final static String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
-    private final static Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty("pusher.apple.apns.sandbox");
+    private final String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getProperty("pusher.google.fcm.path", "");
+    private final String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
+    private final String APNS_PKCS8_FILE_PATH = JiveGlobals.getProperty("pusher.apple.apns.path", "");
+    private final String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
+    private final String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
+    private final String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
+    private final Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty("pusher.apple.apns.sandbox");
 
     private void sendPushToProduction(SimpleApnsPushNotification pushNotification, ApnsClientBuilder builder) throws Exception
     {
@@ -101,6 +102,8 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
     {
         Log.debug("Push notification plugin is initalizing");
 
+        OfflineMessageStrategy.addListener(this);
+
         try
         {
             Pushraven.setCredential(new File(FCM_CREDENTIAL_FILE_PATH));
@@ -108,13 +111,14 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
         }
         catch (Exception exception)
         {
-            Log.error(exception.getMessage());
+            Log.error("Error while initializing pusher" + exception.getMessage());
         }
     }
 
     @Override
     public void destroyPlugin()
     {
+        OfflineMessageStrategy.removeListener(this);
         Log.debug("Push notification plugin is destroyed");
     }
 
@@ -171,7 +175,7 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
 
                 FcmResponse response = Pushraven.push(ravenMessage);
 
-                Log.debug(response.getMessage());
+                Log.debug("Android FCM response" + response.getMessage());
             }
             else if (receiverResource.contains("ios"))
             {
@@ -204,7 +208,7 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
         }
         catch (Exception exception)
         {
-            Log.error(exception.getMessage());
+            Log.error("Error while sending push" + exception.getMessage());
             return;
         }
         finally
@@ -217,7 +221,7 @@ public class PusherPlugin implements Plugin, OfflineMessageListener
             }
             catch (Exception exception)
             {
-                Log.error(exception.getMessage());
+                Log.error("Error while closing dbconnections" + exception.getMessage());
             }
         }
     }
