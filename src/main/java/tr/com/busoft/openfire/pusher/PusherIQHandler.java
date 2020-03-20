@@ -79,25 +79,24 @@ public class PusherIQHandler extends IQHandler
                     String resource = sender.getResource();
                     String token = tokenNode.getStringValue();
 
-                    String sql = String.format("SELECT FROM ofPusher WHERE username = '%s' AND resource = '%s'", senderUsername, resource);
+                    String sql = String.format("SELECT 1 FROM ofPusher WHERE username = '%s' AND resource = '%s'", senderUsername, resource);
                     resultSet = statement.executeQuery(sql);
 
                     boolean exist = resultSet.next();
-                    resultSet.close();
                     if (exist)
                     {
                         sql = String.format("UPDATE ofPusher SET token = '%s' WHERE username = '%s' AND resource = '%s'", token, senderUsername, resource);
                     }
                     else
                     {
-                        sql = String.format("INSERT INTO ofPusher (username, resource, token) VALUES '%s', '%s', '%s'", senderUsername, resource, token);
+                        sql = String.format("INSERT INTO ofPusher (username, resource, token) VALUES ('%s', '%s', '%s')", senderUsername, resource, token);
                     }
 
-                    resultSet = statement.executeQuery(sql);
+                    statement.executeUpdate(sql);
                 }
                 catch (Exception exception)
                 {
-                    Log.error("Error while deleting" + exception.getMessage());
+                    Log.error("Error while enabling " + exception.getMessage());
                     result.setError(PacketError.Condition.bad_request);
                 }
                 finally
@@ -110,7 +109,7 @@ public class PusherIQHandler extends IQHandler
                     }
                     catch (Exception exception)
                     {
-                        Log.error("Error while closing dbconnections" + exception.getMessage());
+                        Log.error("Error while closing dbconnections " + exception.getMessage());
                         result.setError(PacketError.Condition.bad_request);
                     }
                 }
@@ -120,7 +119,6 @@ public class PusherIQHandler extends IQHandler
             {
                 Connection connection = null;
                 Statement statement = null;
-                ResultSet resultSet = null;
                 try
                 {
                     connection = DbConnectionManager.getConnection();
@@ -130,11 +128,11 @@ public class PusherIQHandler extends IQHandler
                     String senderUsername = sender.getNode();
                     String sql = String.format("DELETE FROM ofPusher WHERE username = '%s'", senderUsername);
 
-                    resultSet = statement.executeQuery(sql);
+                    statement.executeUpdate(sql);
                 }
                 catch (Exception exception)
                 {
-                    Log.error("Error while deleting" + exception.getMessage());
+                    Log.error("Error while deleting " + exception.getMessage());
 
                     result.setError(PacketError.Condition.bad_request);
                 }
@@ -144,11 +142,10 @@ public class PusherIQHandler extends IQHandler
                     {
                         connection.close();
                         statement.close();
-                        resultSet.close();
                     }
                     catch (Exception exception)
                     {
-                        Log.error("Error while closing dbconnections" + exception.getMessage());
+                        Log.error("Error while closing dbconnections " + exception.getMessage());
 
                         result.setError(PacketError.Condition.bad_request);
                     }
