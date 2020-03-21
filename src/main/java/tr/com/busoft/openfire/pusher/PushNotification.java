@@ -71,7 +71,8 @@ public class PushNotification implements OfflineMessageListener
         ResultSet resultSet = null;
         try
         {
-            if (isChatState(message) || isReceipt(message)) {
+            if (isChatState(message) || isReceipt(message))
+            {
                 return;
             }
 
@@ -95,7 +96,12 @@ public class PushNotification implements OfflineMessageListener
             statement = dbconnection.createStatement();
             resultSet = statement.executeQuery(sql);
 
-            resultSet.next();
+            if (!resultSet.next())
+            {
+                Log.debug("Receiver: {} does not have token so notification will not be sent", receiverUsername);
+                return;
+            }
+
             String token = resultSet.getString("token");
 
             String messageBody = message.getBody();
@@ -203,11 +209,11 @@ public class PushNotification implements OfflineMessageListener
                     }
                     else
                     {
-                        Log.error(prefix + " Notification rejected by the APNs gateway: " + pushNotificationResponse.getRejectionReason());
+                        Log.error(prefix + " Notification rejected by the APNs gateway: " + pushNotificationResponse.getRejectionReason() + "token: " + token);
 
                         if (pushNotificationResponse.getTokenInvalidationTimestamp() != null)
                         {
-                            Log.error("\t…and the token is invalid as of " + pushNotificationResponse.getTokenInvalidationTimestamp());
+                            Log.error("\t…and the token is invalid as of " + pushNotificationResponse.getTokenInvalidationTimestamp() + "token: " + token);
                         }
                     }
                 }
@@ -220,31 +226,42 @@ public class PushNotification implements OfflineMessageListener
         );
     }
 
-    static boolean isChatState(final Message message) {
+    private static boolean isChatState(final Message message)
+    {
+        boolean result = false;
         Iterator<?> it = message.getElement().elementIterator();
 
-        while (it.hasNext()) {
+        while (it.hasNext())
+        {
             Object item = it.next();
 
-            if (item instanceof Element) {
+            if (item instanceof Element)
+            {
                 Element el = (Element) item;
-                if (Namespace.NO_NAMESPACE.equals(el.getNamespace())) {
+                if (Namespace.NO_NAMESPACE.equals(el.getNamespace()))
+                {
                     continue;
                 }
-                if (el.getNamespaceURI().equals("http://jabber.org/protocol/chatstates") && !(el.getQualifiedName().equals("active"))) {
-                    return true;
+
+                if (el.getNamespaceURI().equals("http://jabber.org/protocol/chatstates") && !(el.getQualifiedName().equals("active")))
+                {
+                    result = true;
+                    break;
                 }
             }
         }
 
-        return false;
+        return result;
     }
 
-    static boolean isReceipt(final Message message) {
-        if ((message.getExtension("received", "urn:xmpp:receipts") != null) || (message.getExtension("seen", "urn:xmpp:receipts")) != null) {
-            return true;
+    private static boolean isReceipt(final Message message)
+    {
+        boolean result = false;
+        if ((message.getExtension("received", "urn:xmpp:receipts") != null) || (message.getExtension("seen", "urn:xmpp:receipts")) != null)
+        {
+            result = true;
         }
 
-        return false;
+        return result;
     }
 }
