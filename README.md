@@ -1,5 +1,7 @@
 # Openfire Pusher Plugin
 
+[![Build Status](https://travis-ci.org/busoft-tech/openfire-pusher-plugin.svg?branch=master)](https://travis-ci.org/busoft-tech/openfire-pusher-plugin)
+
 The Push Notification Plugin is a plugin for the [Openfire XMPP server](https://www.igniterealtime.org/openfire), which adds support sending push notifications to ios and android clients.
 
 Building
