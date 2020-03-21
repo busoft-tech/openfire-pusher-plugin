@@ -10,7 +10,7 @@
 
   <groupId>tr.com.busoft.openfire</groupId>
   <artifactId>pusher</artifactId>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
 
   <name>Pusher Plugin</name>
   <description>Push Notification Plugin</description>
