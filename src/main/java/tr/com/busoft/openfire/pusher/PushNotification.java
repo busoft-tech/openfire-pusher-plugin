@@ -4,6 +4,9 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Iterator;
+import org.dom4j.Element;
+import org.dom4j.Namespace;
 
 import com.eatthepath.pushy.apns.ApnsClient;
 import com.eatthepath.pushy.apns.ApnsClientBuilder;
@@ -68,18 +71,25 @@ public class PushNotification implements OfflineMessageListener
         ResultSet resultSet = null;
         try
         {
+            if (isChatState(message) || isReceipt(message)) {
+                return;
+            }
+
+            Log.debug("Message Stored Offline");
+            Log.debug(message.toString());
+            Log.debug("Push notification will be sent");
+
             dbconnection = DbConnectionManager.getConnection();
 
             JID sender = message.getFrom();
             String senderUsername = sender.getNode();
 
-            Log.debug("Sender is: " + senderUsername);
-
             JID receiver = message.getTo();
             String receiverUsername = receiver.getNode();
             String receiverResource = receiver.getResource();
 
-            Log.debug("User :" + receiverUsername + ": is not online, push notification will be sent");
+            Log.debug("From: " + sender.toString());
+            Log.debug("To: " + receiver.toString());
 
             String sql = String.format("SELECT token FROM ofPusher WHERE username = '%s' AND resource = '%s'", receiverUsername, receiverResource);
             statement = dbconnection.createStatement();
@@ -208,5 +218,33 @@ public class PushNotification implements OfflineMessageListener
                 }
             }
         );
+    }
+
+    static boolean isChatState(final Message message) {
+        Iterator<?> it = message.getElement().elementIterator();
+
+        while (it.hasNext()) {
+            Object item = it.next();
+
+            if (item instanceof Element) {
+                Element el = (Element) item;
+                if (Namespace.NO_NAMESPACE.equals(el.getNamespace())) {
+                    continue;
+                }
+                if (el.getNamespaceURI().equals("http://jabber.org/protocol/chatstates") && !(el.getQualifiedName().equals("active"))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    static boolean isReceipt(final Message message) {
+        if ((message.getExtension("received", "urn:xmpp:receipts") != null) || (message.getExtension("seen", "urn:xmpp:receipts")) != null) {
+            return true;
+        }
+
+        return false;
     }
 }
