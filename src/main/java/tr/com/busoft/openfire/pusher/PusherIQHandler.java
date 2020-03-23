@@ -59,6 +59,14 @@ public class PusherIQHandler extends IQHandler
                     return result;
                 }
 
+                Element typeNode = node.element("type");
+                if (typeNode == null)
+                {
+                    Log.debug("Ignoring an enable request if it does not include type: {}", packet);
+                    result.setError(PacketError.Condition.bad_request);
+                    return result;
+                }
+
                 Connection dbConnection = null;
                 Statement statement = null;
                 try
@@ -66,12 +74,13 @@ public class PusherIQHandler extends IQHandler
                     dbConnection = DbConnectionManager.getConnection();
                     statement = dbConnection.createStatement();
 
-                    JID sender = packet.getFrom();
-                    String senderUsername = sender.getNode();
-                    String resource = sender.getResource();
+                    JID user = packet.getFrom();
+                    String username = user.getNode();
+                    String resource = user.getResource();
                     String token = tokenNode.getStringValue();
+                    String type = typeNode.getStringValue();
 
-                    String sql = String.format("INSERT INTO ofPusher (username, resource, token) VALUES ('%s', '%s', '%s') ON DUPLICATE KEY UPDATE token = VALUES(token)", senderUsername, resource, token);
+                    String sql = String.format("INSERT INTO ofPusher (username, resource, token, type) VALUES ('%s', '%s', '%s', '%s') ON DUPLICATE KEY UPDATE token = VALUES(token), type = VALUES(type)", username, resource, token, type);
                     statement.executeUpdate(sql);
                 }
                 catch (Exception exception)
@@ -102,9 +111,10 @@ public class PusherIQHandler extends IQHandler
                     dbConnection = DbConnectionManager.getConnection();
                     statement = dbConnection.createStatement();
 
-                    JID sender = packet.getFrom();
-                    String senderUsername = sender.getNode();
-                    String sql = String.format("DELETE FROM ofPusher WHERE username = '%s'", senderUsername);
+                    JID user = packet.getFrom();
+                    String username = user.getNode();
+                    String resource = user.getResource();
+                    String sql = String.format("DELETE FROM ofPusher WHERE username = '%s' AND resource = '%s'", username, resource);
 
                     statement.executeUpdate(sql);
                 }
