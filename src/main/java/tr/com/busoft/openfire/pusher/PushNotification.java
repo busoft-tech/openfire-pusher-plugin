@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Iterator;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
@@ -26,7 +27,6 @@ import org.xmpp.packet.JID;
 import org.xmpp.packet.Message;
 
 import us.raudi.pushraven.FcmResponse;
-import us.raudi.pushraven.Notification;
 import us.raudi.pushraven.Pushraven;
 import us.raudi.pushraven.configs.AndroidConfig;
 import us.raudi.pushraven.configs.AndroidConfig.Priority;
@@ -92,7 +92,7 @@ public class PushNotification implements OfflineMessageListener
             Log.debug("From: " + sender.toString());
             Log.debug("To: " + receiver.toString());
 
-            String sql = String.format("SELECT token FROM ofPusher WHERE username = '%s' AND resource = '%s'", receiverUsername, receiverResource);
+            String sql = String.format("SELECT type, token FROM ofPusher WHERE username = '%s' AND resource = '%s'", receiverUsername, receiverResource);
             statement = dbconnection.createStatement();
             resultSet = statement.executeQuery(sql);
 
@@ -103,21 +103,23 @@ public class PushNotification implements OfflineMessageListener
             }
 
             String token = resultSet.getString("token");
+            String type = resultSet.getString("type");
 
             String messageBody = message.getBody();
-            if (receiverResource.contains("android"))
+
+            if (type.equals("android"))
             {
                 Log.debug("Receiver's device is android");
 
-                Notification notification = new Notification()
-                                                .title(senderUsername)
-                                                .body(messageBody);
+                HashMap<String, String> data = new HashMap<String, String>();
+                data.put("title", senderUsername);
+                data.put("body", messageBody);
 
                 AndroidConfig androidCfg = new AndroidConfig()
                                                 .priority(Priority.HIGH);
 
                 us.raudi.pushraven.Message ravenMessage = new us.raudi.pushraven.Message()
-                                                                                .notification(notification)
+                                                                                .data(data)
                                                                                 .token(token)
                                                                                 .android(androidCfg);
 
@@ -125,7 +127,7 @@ public class PushNotification implements OfflineMessageListener
 
                 Log.debug("Android FCM response" + response.getMessage());
             }
-            else if (receiverResource.contains("ios"))
+            else if (type.equals("ios"))
             {
                 Log.debug("Receiver's device is ios");
 
