@@ -41,13 +41,13 @@
 <html>
     <head>
         <title>
-            <fmt:message key="Device List"/>
+            <fmt:message key="devices.title"/>
         </title>
         <meta name="pageID" content="devices"/>
         <script type="text/javascript" >
             function handleDelete(username, resource, pageIndex, pageSize)
             {
-                if (confirm('<fmt:message key="Delete device" /> username: ' + username + ' resource: ' + resource + '?'))
+                if (confirm('<fmt:message key="devices.confirmdelete" /> username: ' + username + ' resource: ' + resource + '?'))
                 {
                     var uri = encodeURI('devices.jsp?csrf=${csrf}&username=' + username + '&resource=' + resource + '&pageIndex=' + pageIndex + "&pageSize=" + pageSize);
                     location.assign(uri);
@@ -95,9 +95,9 @@
                 <table cellpadding="0" cellspacing="0" border="0">
                     <tbody>
                         <tr>
-                            <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="Delete Succeeded"/></td>
+                            <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="<fmt:message key='devices.deletesuccess' />" /></td>
                             <td class="jive-icon-label">
-                                Delete succeeded
+                                <fmt:message key='devices.deletesuccess' />
                             </td>
                         </tr>
                     </tbody>
@@ -112,9 +112,9 @@
                     <table cellpadding="0" cellspacing="0" border="0">
                         <tbody>
                             <tr>
-                                <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="Delete Succeeded"/></td>
+                                <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="<fmt:message key='devices.deletefail' />" /></td>
                                 <td class="jive-icon-label">
-                                    Delete succeeded
+                                    <fmt:message key='devices.deletefail' />
                                 </td>
                             </tr>
                         </tbody>
@@ -139,7 +139,7 @@
             </c:when>
         </c:choose>
 
-        <fmt:message key="Total devices" />: ${deviceCount}, <fmt:message key="Showing" />
+        <fmt:message key="devices.totaldevices" />: ${deviceCount}, <fmt:message key="devices.showing" />
         <c:choose>
             <c:when test="${numberOfPages != pageIndex}" >
                 ${(pageIndex - 1) * pageSize + 1} - ${(pageIndex - 1) * pageSize + pageSize} --
@@ -149,7 +149,7 @@
             </c:otherwise>
         </c:choose>
 
-        <fmt:message key="Devices per page" />
+        <fmt:message key="devices.perpage" />
         <select size="1" onchange="onPageSizeChange('${param.search}', this.options[this.selectedIndex].value)">
             <c:forEach var="range" items="${PAGE_SIZE_LIST}">
                 <option value="${range}" ${range == pageSize ? "selected" : ""} >
@@ -160,7 +160,7 @@
 
         <br/>
 
-        <fmt:message key="Pages: "/>
+        <fmt:message key="devices.pages"/>:
         <c:forEach var="index" begin="1" end="${numberOfPages}">
             <a class="${index == pageIndex ? 'jive-current' : ''}" href="devices.jsp?search=${param.search}&pageIndex=${index}&pageSize=${pageSize}">${index}</a>
         </c:forEach>
@@ -169,17 +169,17 @@
                 <input type="text" name="search" value="${param.search}" />
                 <input type="hidden" name="pageIndex" value="1" />
                 <input type="hidden" name="pageSize" value="${pageSize}" />
-                <button type="submit"><fmt:message key="Search" /></button>
+                <button type="submit"><fmt:message key="devices.search" /></button>
             </form>
             <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <thead>
                     <tr>
                         <th>&nbsp;</th>
-                        <th nowrap><fmt:message key="Username" /></th>
-                        <th nowrap><fmt:message key="Resource" /></th>
-                        <th nowrap><fmt:message key="Token" /></th>
-                        <th nowrap><fmt:message key="Type" /></th>
-                        <th nowrap><fmt:message key="Delete" /></th>
+                        <th nowrap><fmt:message key="devices.username" /></th>
+                        <th nowrap><fmt:message key="devices.resource" /></th>
+                        <th nowrap><fmt:message key="devices.token" /></th>
+                        <th nowrap><fmt:message key="devices.type" /></th>
+                        <th nowrap><fmt:message key="devices.delete" /></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -201,8 +201,8 @@
                                 ${device.type}
                             </td>
                             <td width="2%" >
-                                <a href="#" onclick="handleDelete('${device.username}', '${device.resource}', '${pageIndex}', '${pageSize}')" title="<fmt:message key='Delete device?' />" >
-                                    <img src="images/delete-16x16.gif" width="16" height="16" border="0" alt="<fmt:message key='Confirm' /> asd" >
+                                <a href="#" onclick="handleDelete('${device.username}', '${device.resource}', '${pageIndex}', '${pageSize}')" title="<fmt:message key='devices.confirmdelete' />?" >
+                                    <img src="images/delete-16x16.gif" width="16" height="16" border="0" alt="<fmt:message key='devices.confirm' />" >
                                 </a>
                             </td>
                         </tr>
@@ -211,7 +211,7 @@
             </table>
         </div>
 
-        <fmt:message key="Pages: "/>
+        <fmt:message key="devices.pages"/>:
         <c:forEach var="index" begin="1" end="${numberOfPages}">
             <a class="${index == pageIndex ? 'jive-current' : ''}" href="devices.jsp?pageIndex=${index}&pageSize=${pageSize}">${index}</a>
         </c:forEach>

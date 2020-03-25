@@ -16,10 +16,10 @@
     <databaseVersion>1</databaseVersion>
 
     <adminconsole>
-        <tab id="tab-pusher" name="Pusher" url="devices.jsp" description="Click to manage...">
+        <tab id="tab-pusher" name="Pusher" url="devices.jsp" description="${plugin.description}">
             <sidebar id="sidebar" name="Pusher">
-               <item id="devices" name="Devices" url="devices.jsp" description="Click to to list devices" />
-                <item id="settings" name="Settings" url="settings.jsp" description="Click to edit settings" />
+                <item id="devices" name="${plugin.devices}" url="devices.jsp" description="${plugin.devices.description}" />
+                <item id="settings" name="${plugin.settings}" url="settings.jsp" description="${plugin.settings.description}" />
             </sidebar>
         </tab>
     </adminconsole>

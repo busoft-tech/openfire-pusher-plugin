@@ -48,7 +48,7 @@
 <html>
     <head>
         <title>
-            <fmt:message key="Settings"/>
+            <fmt:message key="settings.title"/>
         </title>
         <meta name="pageID" content="settings"/>
     </head>
@@ -59,9 +59,9 @@
                     <table cellpadding="0" cellspacing="0" border="0">
                         <tbody>
                             <tr>
-                                <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="Save Succeeded"/></td>
+                                <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="<fmt:message key='settings.savesuccess' />"/></td>
                                 <td class="jive-icon-label">
-                                    Save succeeded
+                                    <fmt:message key='settings.savesuccess' />
                                 </td>
                             </tr>
                         </tbody>
@@ -74,9 +74,9 @@
                     <table cellpadding="0" cellspacing="0" border="0">
                         <tbody>
                             <tr>
-                                <td class="jive-icon"><img src="images/error-16x16.gif" width="16" height="16" border="0" alt="Save Failed"/></td>
+                                <td class="jive-icon"><img src="images/error-16x16.gif" width="16" height="16" border="0" alt="<fmt:message key='settings.savefail' />"/></td>
                                 <td class="jive-icon-label">
-                                    Save failed
+                                    <fmt:message key='settings.savefail' />
                                 </td>
                             </tr>
                         </tbody>
@@ -85,21 +85,7 @@
                 <br />
             </c:when>
         </c:choose>
-        <c:if test="${param.savesucceeded eq 'true'}">
-            <div class="jive-success">
-                <table cellpadding="0" cellspacing="0" border="0">
-                    <tbody>
-                        <tr>
-                            <td class="jive-icon"><img src="images/success-16x16.gif" width="16" height="16" border="0" alt="Save Succeeded"/></td>
-                            <td class="jive-icon-label">
-                                Save succeeded
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <br />
-        </c:if>
+
         <div class="jive-table">
             <form action="settings.jsp" method="post">
                 <input type="hidden" name="csrf" value="${csrf}" />
@@ -107,12 +93,12 @@
                     <tbody>
                         <thead>
                             <tr>
-                                <th nowrap><fmt:message key="Apple" /></th>
+                                <th nowrap><fmt:message key="settings.ios" /></th>
                             </tr>
                         </thead>
                         <tr>
                             <td>
-                                <fmt:message key="Apns Bundle Id" />
+                                <fmt:message key="settings.ios.bundleid" />
                             </td>
                             <td>
                                 <text readonly size="80">${pm:getProperty("pusher.apple.apns.bundleId")}</text>
@@ -120,7 +106,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <fmt:message key="Apns Key" />
+                                <fmt:message key="settings.ios.key" />
                             </td>
                             <td>
                                 <text readonly size="80">${pm:getProperty("pusher.apple.apns.key")}</text>
@@ -128,7 +114,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <fmt:message key="Apns Team Id" />
+                                <fmt:message key="settings.ios.teamid" />
                             </td>
                             <td>
                                 <text readonly size="80">${pm:getProperty("pusher.apple.apns.teamId")}</text>
@@ -136,7 +122,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <fmt:message key="Apns Sandbox Enabled" />
+                                <fmt:message key="settings.ios.sandbox" />
                             </td>
                             <td>
                                 <text readonly size="80">${pm:getProperty("pusher.apple.apns.sandbox")}</text>
@@ -144,12 +130,12 @@
                         </tr>
                         <thead>
                             <tr>
-                                <th nowrap><fmt:message key="Android" /></th>
+                                <th nowrap><fmt:message key="settings.android" /></th>
                             </tr>
                         </thead>
                         <tr>
                             <td>
-                                <fmt:message key="Fcm Project Id" />
+                                <fmt:message key="settings.android.projectid" />
                             </td>
                             <td>
                                 <text readonly size="80">${pm:getProperty("pusher.google.fcm.projectId")}</text>
@@ -157,32 +143,32 @@
                         </tr>
                         <thead>
                             <tr>
-                                <th nowrap><fmt:message key="Credentials" /></th>
+                                <th nowrap><fmt:message key="settings.credentials" /></th>
                             </tr>
                         </thead>
                         <tr>
                             <td width="20%">
-                                <fmt:message key="FCM Credential File Content" />
+                                <fmt:message key="settings.android.file" />
                             </td>
                             <td>
                                 <textarea name="fcm" cols="70" rows="10"></textarea>
                             </td>
                             <td width="35%">
                                 <button type="submit">
-                                    <fmt:message key="Save" />
+                                    <fmt:message key="settings.save" />
                                 </button>
                             </td>
                         </tr>
                         <tr>
                             <td width="20%">
-                                <fmt:message key="APNS PKCS8 File Content" />
+                                <fmt:message key="settings.ios.file" />
                             </td>
                             <td>
                                 <textarea name="apns" cols="70" rows="10"></textarea>
                             </td>
                             <td width="35%">
                                 <button type="submit">
-                                    <fmt:message key="Save" />
+                                    <fmt:message key="settings.save" />
                                 </button>
                             </td>
                         </tr>
