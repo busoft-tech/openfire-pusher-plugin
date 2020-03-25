@@ -14,4 +14,13 @@
 
     <databaseKey>pusher</databaseKey>
     <databaseVersion>1</databaseVersion>
+
+    <adminconsole>
+        <tab id="tab-pusher" name="Pusher" url="devices.jsp" description="Click to manage...">
+            <sidebar id="sidebar" name="Pusher">
+               <item id="devices" name="Devices" url="devices.jsp" description="Click to to list devices" />
+                <item id="settings" name="Settings" url="settings.jsp" description="Click to edit settings" />
+            </sidebar>
+        </tab>
+    </adminconsole>
 </plugin>

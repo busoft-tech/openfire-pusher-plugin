@@ -10,7 +10,7 @@
 
   <groupId>tr.com.busoft.openfire</groupId>
   <artifactId>pusher</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 
   <name>Pusher Plugin</name>
   <description>Push Notification Plugin</description>
@@ -41,7 +41,12 @@
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-jspc-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
