@@ -35,10 +35,10 @@ public class PushNotification implements OfflineMessageListener
 {
     private static final Logger Log = LoggerFactory.getLogger(PushNotification.class);
 
-    private final String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getProperty("pusher.google.fcm.path", "");
+    private final String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getHomeDirectory() + File.separator + "conf" + File.separator + "pusher-fcm.json";
     private final String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
 
-    private final String APNS_PKCS8_FILE_PATH = JiveGlobals.getProperty("pusher.apple.apns.path", "");
+    private final String APNS_PKCS8_FILE_PATH = JiveGlobals.getHomeDirectory() + File.separator + "conf" + File.separator + "pusher-apns.p8";
     private final String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
     private final String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
     private final String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
@@ -48,12 +48,13 @@ public class PushNotification implements OfflineMessageListener
     {
         try
         {
-            Pushraven.setCredential(new File(FCM_CREDENTIAL_FILE_PATH));
+            File fcmCredentialFile = new File(FCM_CREDENTIAL_FILE_PATH);
+            Pushraven.setCredential(fcmCredentialFile);
             Pushraven.setProjectId(FCM_PROJECT_ID);
         }
         catch (Exception exception)
         {
-            Log.error("Error while initializing pusher" + exception.getMessage());
+            Log.error("Error while initializing pusher " + exception.getMessage());
         }
     }
 
@@ -125,7 +126,7 @@ public class PushNotification implements OfflineMessageListener
 
                 FcmResponse response = Pushraven.push(ravenMessage);
 
-                Log.debug("Android FCM response" + response.getMessage());
+                Log.debug("Android FCM response " + response.getMessage());
             }
             else if (type.equals("ios"))
             {
@@ -141,8 +142,9 @@ public class PushNotification implements OfflineMessageListener
                 String tokenSanitized = TokenUtil.sanitizeTokenString(token);
                 SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(tokenSanitized, APNS_BUNDLE_ID, payload);
 
+                File apnsCredentialFile = new File(APNS_PKCS8_FILE_PATH);
                 ApnsClientBuilder builder = new ApnsClientBuilder()
-                                                .setSigningKey(ApnsSigningKey.loadFromPkcs8File(new File(APNS_PKCS8_FILE_PATH), APNS_TEAM_ID, APNS_KEY));
+                                                .setSigningKey(ApnsSigningKey.loadFromPkcs8File(apnsCredentialFile, APNS_TEAM_ID, APNS_KEY));
 
                 sendPushToProduction(pushNotification, builder);
 
@@ -158,19 +160,12 @@ public class PushNotification implements OfflineMessageListener
         }
         catch (Exception exception)
         {
-            Log.error("Error while sending push" + exception.getMessage());
+            Log.error("Error while sending push " + exception.getMessage());
             return;
         }
         finally
         {
-            try
-            {
-                DbConnectionManager.closeConnection(resultSet, statement, dbconnection);
-            }
-            catch (Exception exception)
-            {
-                Log.error("Error while closing dbconnections" + exception.getMessage());
-            }
+            DbConnectionManager.closeConnection(resultSet, statement, dbconnection);
         }
     }
 

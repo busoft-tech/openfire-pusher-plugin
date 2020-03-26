@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="https://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://java.sun.com/xml/ns/j2ee https://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+    version="2.0">
+    <tlib-version>1.0</tlib-version>
+    <short-name>pushermanager</short-name>
+    <description>Pusher Manager Tag Library</description>
+    <function>
+        <name>getTotalDeviceCount</name>
+        <function-class>tr.com.busoft.openfire.pusher.PusherManager</function-class>
+        <function-signature>int getTotalDeviceCount()</function-signature>
+    </function>
+    <function>
+        <name>getSearchTotalDeviceCount</name>
+        <function-class>tr.com.busoft.openfire.pusher.PusherManager</function-class>
+        <function-signature>int getSearchTotalDeviceCount(java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>getDeviceList</name>
+        <function-class>tr.com.busoft.openfire.pusher.PusherManager</function-class>
+        <function-signature>java.util.List getDeviceList(int, int)</function-signature>
+    </function>
+    <function>
+        <name>searchDeviceList</name>
+        <function-class>tr.com.busoft.openfire.pusher.PusherManager</function-class>
+        <function-signature>java.util.List searchDeviceList(java.lang.String, int, int)</function-signature>
+    </function>
+    <function>
+        <name>getProperty</name>
+        <function-class>tr.com.busoft.openfire.pusher.PusherManager</function-class>
+        <function-signature>java.lang.String getProperty(java.lang.String)</function-signature>
+    </function>
+</taglib>
