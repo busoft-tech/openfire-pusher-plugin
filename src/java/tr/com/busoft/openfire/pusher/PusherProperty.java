@@ -15,12 +15,19 @@ public class PusherProperty implements PropertyEventListener
     public static final String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getHomeDirectory() + File.separator + "conf" + File.separator + "pusher-fcm.json";
     public static final String APNS_PKCS8_FILE_PATH = JiveGlobals.getHomeDirectory() + File.separator + "conf" + File.separator + "pusher-apns.p8";
 
-    public static String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
+    public static final String PROPERTY_NAME_FCM_PROJECT_ID = "pusher.google.fcm.projectId";
 
-    public static String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
-    public static String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
-    public static String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
-    public static Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty("pusher.apple.apns.sandbox");
+    public static String FCM_PROJECT_ID = JiveGlobals.getProperty(PROPERTY_NAME_FCM_PROJECT_ID, "");
+
+    public static final String PROPERTY_NAME_APNS_TEAM_ID = "pusher.apple.apns.teamId";
+    public static final String PROPERTY_NAME_APNS_KEY = "pusher.apple.apns.key";
+    public static final String PROPERTY_NAME_APNS_BUNDLE_ID = "pusher.apple.apns.bundleId";
+    public static final String PROPERTY_NAME_APNS_SANDBOX = "pusher.apple.apns.sandbox";
+
+    public static String APNS_TEAM_ID = JiveGlobals.getProperty(PROPERTY_NAME_APNS_TEAM_ID, "");
+    public static String APNS_KEY = JiveGlobals.getProperty(PROPERTY_NAME_APNS_KEY, "");
+    public static String APNS_BUNDLE_ID = JiveGlobals.getProperty(PROPERTY_NAME_APNS_BUNDLE_ID, "");
+    public static Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty(PROPERTY_NAME_APNS_SANDBOX);
 
     @Override
     public void propertySet(String property, Map<String, Object> params)
@@ -29,27 +36,27 @@ public class PusherProperty implements PropertyEventListener
         Log.debug("Property :{}: has been set new value: {}", property, value);
         switch (property)
         {
-            case "pusher.google.fcm.projectId":
+            case PROPERTY_NAME_FCM_PROJECT_ID:
             {
                 FCM_PROJECT_ID = (String) value;
                 break;
             }
-            case "pusher.apple.apns.teamId":
+            case PROPERTY_NAME_APNS_TEAM_ID:
             {
                 APNS_TEAM_ID = (String) value;
                 break;
             }
-            case "pusher.apple.apns.key":
+            case PROPERTY_NAME_APNS_KEY:
             {
                 APNS_KEY = (String) value;
                 break;
             }
-            case "pusher.apple.apns.bundleId":
+            case PROPERTY_NAME_APNS_BUNDLE_ID:
             {
                 APNS_BUNDLE_ID = (String) value;
                 break;
             }
-            case "pusher.apple.apns.sandbox":
+            case PROPERTY_NAME_APNS_SANDBOX:
             {
                 APNS_SANDBOX_ENABLED = (Boolean) value;
                 break;
@@ -63,27 +70,27 @@ public class PusherProperty implements PropertyEventListener
         Log.debug("Property :{}: has been deleted", property);
         switch (property)
         {
-            case "pusher.google.fcm.projectId":
+            case PROPERTY_NAME_FCM_PROJECT_ID:
             {
                 FCM_PROJECT_ID = null;
                 break;
             }
-            case "pusher.apple.apns.teamId":
+            case PROPERTY_NAME_APNS_TEAM_ID:
             {
                 APNS_TEAM_ID = null;
                 break;
             }
-            case "pusher.apple.apns.key":
+            case PROPERTY_NAME_APNS_KEY:
             {
                 APNS_KEY = null;
                 break;
             }
-            case "pusher.apple.apns.bundleId":
+            case PROPERTY_NAME_APNS_BUNDLE_ID:
             {
                 APNS_BUNDLE_ID = null;
                 break;
             }
-            case "pusher.apple.apns.sandbox":
+            case PROPERTY_NAME_APNS_SANDBOX:
             {
                 APNS_SANDBOX_ENABLED = false;
                 break;

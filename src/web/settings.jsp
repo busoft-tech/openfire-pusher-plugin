@@ -2,46 +2,74 @@
 
 <%@ page import="org.jivesoftware.util.*" %>
 <%@ page import="tr.com.busoft.openfire.pusher.PusherManager" %>
+<%@ page import="tr.com.busoft.openfire.pusher.PusherProperty" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/pushermanager.tld" prefix="pm"%>
 
 <%
-    boolean csrfCheck = true;
-    Cookie csrfCookie = CookieUtils.getCookie(request, "csrf");
-    String csrfParam = ParamUtils.getParameter(request, "csrf");
+    boolean androidUpdate = request.getParameter("androidUpdate") != null;
+    boolean iosUpdate = request.getParameter("iosUpdate") != null;
+    boolean androidCredentialUpdate = request.getParameter("androidCredentialUpdate") != null;
+    boolean iosCredentialUpdate = request.getParameter("iosCredentialUpdate") != null;
 
-    if (csrfCookie == null || csrfParam == null || !csrfCookie.getValue().equals(csrfParam))
+    boolean csrfCheck = false;
+    if (androidUpdate || iosUpdate || androidCredentialUpdate || iosCredentialUpdate)
     {
-        csrfCheck = false;
+        Cookie csrfCookie = CookieUtils.getCookie(request, "csrf");
+        String csrfParam = ParamUtils.getParameter(request, "csrf");
+        if (csrfCookie == null || csrfParam == null || !csrfCookie.getValue().equals(csrfParam))
+        {
+            String newUrl = "settings.jsp?savesucceeded=false";
+            response.sendRedirect(newUrl);
+        }
+        else
+        {
+            csrfCheck = true;
+        }
     }
 
-    csrfParam = StringUtils.randomString(15);
+    String csrfParam = StringUtils.randomString(15);
     CookieUtils.setCookie(request, response, "csrf", csrfParam, -1);
     pageContext.setAttribute("csrf", csrfParam);
+    pageContext.setAttribute("fcmcredentialpath", PusherProperty.FCM_CREDENTIAL_FILE_PATH);
+    pageContext.setAttribute("apnscredentialpath", PusherProperty.APNS_PKCS8_FILE_PATH);
 
-    String apns = ParamUtils.getStringParameter(request, "apns", null);
-    String fcm = ParamUtils.getStringParameter(request, "fcm", null);
     if (csrfCheck)
     {
         String newUrl = "settings.jsp?savesucceeded=true";
-        if (apns != null)
+        if (iosUpdate)
         {
+            String bundleId = ParamUtils.getStringParameter(request, "bundleId", null);
+            String key = ParamUtils.getStringParameter(request, "key", null);
+            String teamId = ParamUtils.getStringParameter(request, "teamId", null);
+            String sandbox = ParamUtils.getStringParameter(request, "sandbox", null);
+
+            PusherManager.setIosSettings(bundleId, key, teamId, sandbox);
+            response.sendRedirect(newUrl);
+        }
+
+        if (androidUpdate)
+        {
+            String projectId = ParamUtils.getStringParameter(request, "projectId", null);
+            PusherManager.setAndroidSettings(projectId);
+            response.sendRedirect(newUrl);
+        }
+
+        if (iosCredentialUpdate)
+        {
+            String apns = ParamUtils.getStringParameter(request, "apns", null);
             PusherManager.writeCredentialFileContent(apns, "ios");
             response.sendRedirect(newUrl);
         }
 
-        if (fcm != null)
+        if (androidCredentialUpdate)
         {
+            String fcm = ParamUtils.getStringParameter(request, "fcm", null);
             PusherManager.writeCredentialFileContent(fcm, "android");
             response.sendRedirect(newUrl);
         }
-    }
-    else if ((apns != null || fcm != null) && !csrfCheck)
-    {
-        String newUrl = "settings.jsp?savesucceeded=false";
-        response.sendRedirect(newUrl);
     }
 %>
 
@@ -86,22 +114,20 @@
             </c:when>
         </c:choose>
 
-        <div class="jive-table">
-            <form action="settings.jsp" method="post">
-                <input type="hidden" name="csrf" value="${csrf}" />
-                <table cellpadding="0" cellspacing="0" border="0" width="60%">
+        <form action="settings.jsp" method="post">
+            <input type="hidden" name="csrf" value="${csrf}" />
+            <div class="jive-contentBoxHeader">
+                <fmt:message key="settings.ios" />
+            </div>
+            <div class="jive-contentBox">
+                <table cellspacing="0" border="0">
                     <tbody>
-                        <thead>
-                            <tr>
-                                <th nowrap><fmt:message key="settings.ios" /></th>
-                            </tr>
-                        </thead>
                         <tr>
                             <td>
                                 <fmt:message key="settings.ios.bundleid" />
                             </td>
                             <td>
-                                <text readonly size="80">${pm:getProperty("pusher.apple.apns.bundleId")}</text>
+                                <input type="text" name="bundleId" size="80" value='${pm:getProperty("pusher.apple.apns.bundleId")}' />
                             </td>
                         </tr>
                         <tr>
@@ -109,7 +135,7 @@
                                 <fmt:message key="settings.ios.key" />
                             </td>
                             <td>
-                                <text readonly size="80">${pm:getProperty("pusher.apple.apns.key")}</text>
+                                <input type="text" name="key" size="80" value='${pm:getProperty("pusher.apple.apns.key")}' />
                             </td>
                         </tr>
                         <tr>
@@ -117,7 +143,7 @@
                                 <fmt:message key="settings.ios.teamid" />
                             </td>
                             <td>
-                                <text readonly size="80">${pm:getProperty("pusher.apple.apns.teamId")}</text>
+                                <input type="text" name="teamId" size="80" value='${pm:getProperty("pusher.apple.apns.teamId")}' />
                             </td>
                         </tr>
                         <tr>
@@ -125,56 +151,97 @@
                                 <fmt:message key="settings.ios.sandbox" />
                             </td>
                             <td>
-                                <text readonly size="80">${pm:getProperty("pusher.apple.apns.sandbox")}</text>
+                                <input type="text" name="sandbox" size="80" value='${pm:getProperty("pusher.apple.apns.sandbox")}' />
                             </td>
                         </tr>
-                        <thead>
-                            <tr>
-                                <th nowrap><fmt:message key="settings.android" /></th>
-                            </tr>
-                        </thead>
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" name="iosUpdate">
+                <fmt:message key="settings.save" />
+            </button>
+        </form>
+        <br />
+        <br />
+
+        <form action="settings.jsp" method="post">
+            <input type="hidden" name="csrf" value="${csrf}" />
+            <div class="jive-contentBoxHeader">
+                <fmt:message key="settings.android" />
+            </div>
+            <div class="jive-contentBox">
+                <table cellspacing="0" border="0">
+                    <tbody>
                         <tr>
                             <td>
                                 <fmt:message key="settings.android.projectid" />
                             </td>
                             <td>
-                                <text readonly size="80">${pm:getProperty("pusher.google.fcm.projectId")}</text>
-                            </td>
-                        </tr>
-                        <thead>
-                            <tr>
-                                <th nowrap><fmt:message key="settings.credentials" /></th>
-                            </tr>
-                        </thead>
-                        <tr>
-                            <td width="20%">
-                                <fmt:message key="settings.android.file" />
-                            </td>
-                            <td>
-                                <textarea name="fcm" cols="70" rows="10"></textarea>
-                            </td>
-                            <td width="35%">
-                                <button type="submit">
-                                    <fmt:message key="settings.save" />
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="20%">
-                                <fmt:message key="settings.ios.file" />
-                            </td>
-                            <td>
-                                <textarea name="apns" cols="70" rows="10"></textarea>
-                            </td>
-                            <td width="35%">
-                                <button type="submit">
-                                    <fmt:message key="settings.save" />
-                                </button>
+                                <input type="text" name="projectId" size="80" value='${pm:getProperty("pusher.google.fcm.projectId")}' />
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </form>
-        </div>
+            </div>
+            <button type="submit" name="androidUpdate">
+                <fmt:message key="settings.save" />
+            </button>
+        </form>
+        <br />
+        <br />
+
+        <form action="settings.jsp" method="post">
+            <input type="hidden" name="csrf" value="${csrf}" />
+            <div class="jive-contentBoxHeader">
+                <fmt:message key="settings.ios.file" />
+            </div>
+            <div class="jive-contentBox">
+                <table cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <fmt:message key="settings.path"/>: <text readonly size="80">${apnscredentialpath}</text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea name="ios" cols="70" rows="10"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" name="iosCredentialUpdate">
+                <fmt:message key="settings.save" />
+            </button>
+        </form>
+        <br />
+        <br />
+
+        <form action="settings.jsp" method="post">
+            <input type="hidden" name="csrf" value="${csrf}" />
+            <div class="jive-contentBoxHeader">
+                <fmt:message key="settings.android.file" />
+            </div>
+            <div class="jive-contentBox">
+                <table cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <fmt:message key="settings.path" />: <text readonly size="80">${fcmcredentialpath}</text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea name="fcm" cols="70" rows="10"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" name="androidCredentialUpdate">
+                <fmt:message key="settings.save" />
+            </button>
+        </form>
     </body>
 </html>
