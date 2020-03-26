@@ -20,7 +20,6 @@ import com.eatthepath.pushy.apns.util.concurrent.PushNotificationFuture;
 
 import org.jivesoftware.database.DbConnectionManager;
 import org.jivesoftware.openfire.OfflineMessageListener;
-import org.jivesoftware.util.JiveGlobals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmpp.packet.JID;
@@ -35,22 +34,13 @@ public class PushNotification implements OfflineMessageListener
 {
     private static final Logger Log = LoggerFactory.getLogger(PushNotification.class);
 
-    private final String FCM_CREDENTIAL_FILE_PATH = JiveGlobals.getHomeDirectory() + File.separator + "conf" + File.separator + "pusher-fcm.json";
-    private final String FCM_PROJECT_ID = JiveGlobals.getProperty("pusher.google.fcm.projectId", "");
-
-    private final String APNS_PKCS8_FILE_PATH = JiveGlobals.getHomeDirectory() + File.separator + "conf" + File.separator + "pusher-apns.p8";
-    private final String APNS_TEAM_ID = JiveGlobals.getProperty("pusher.apple.apns.teamId", "");
-    private final String APNS_KEY = JiveGlobals.getProperty("pusher.apple.apns.key", "");
-    private final String APNS_BUNDLE_ID = JiveGlobals.getProperty("pusher.apple.apns.bundleId", "");
-    private final Boolean APNS_SANDBOX_ENABLED = JiveGlobals.getBooleanProperty("pusher.apple.apns.sandbox");
-
     public PushNotification()
     {
         try
         {
-            File fcmCredentialFile = new File(FCM_CREDENTIAL_FILE_PATH);
+            File fcmCredentialFile = new File(PusherProperty.FCM_CREDENTIAL_FILE_PATH);
             Pushraven.setCredential(fcmCredentialFile);
-            Pushraven.setProjectId(FCM_PROJECT_ID);
+            Pushraven.setProjectId(PusherProperty.FCM_PROJECT_ID);
         }
         catch (Exception exception)
         {
@@ -140,15 +130,15 @@ public class PushNotification implements OfflineMessageListener
                 String payload = payloadBuilder.setAlertBody(messageBody).buildWithDefaultMaximumLength();
 
                 String tokenSanitized = TokenUtil.sanitizeTokenString(token);
-                SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(tokenSanitized, APNS_BUNDLE_ID, payload);
+                SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(tokenSanitized, PusherProperty.APNS_BUNDLE_ID, payload);
 
-                File apnsCredentialFile = new File(APNS_PKCS8_FILE_PATH);
+                File apnsCredentialFile = new File(PusherProperty.APNS_PKCS8_FILE_PATH);
                 ApnsClientBuilder builder = new ApnsClientBuilder()
-                                                .setSigningKey(ApnsSigningKey.loadFromPkcs8File(apnsCredentialFile, APNS_TEAM_ID, APNS_KEY));
+                                                .setSigningKey(ApnsSigningKey.loadFromPkcs8File(apnsCredentialFile, PusherProperty.APNS_TEAM_ID, PusherProperty.APNS_KEY));
 
                 sendPushToProduction(pushNotification, builder);
 
-                if (APNS_SANDBOX_ENABLED)
+                if (PusherProperty.APNS_SANDBOX_ENABLED)
                 {
                     sendPushToSandbox(pushNotification, builder);
                 }
