@@ -34,20 +34,6 @@ public class PushNotification implements OfflineMessageListener
 {
     private static final Logger Log = LoggerFactory.getLogger(PushNotification.class);
 
-    public PushNotification()
-    {
-        try
-        {
-            File fcmCredentialFile = new File(PusherProperty.FCM_CREDENTIAL_FILE_PATH);
-            Pushraven.setCredential(fcmCredentialFile);
-            Pushraven.setProjectId(PusherProperty.FCM_PROJECT_ID);
-        }
-        catch (Exception exception)
-        {
-            Log.error("Error while initializing pusher " + exception.getMessage());
-        }
-    }
-
     @Override
     public void messageBounced(Message message)
     {
@@ -101,6 +87,10 @@ public class PushNotification implements OfflineMessageListener
             if (type.equals("android"))
             {
                 Log.debug("Receiver's device is android");
+
+                File fcmCredentialFile = new File(PusherProperty.FCM_CREDENTIAL_FILE_PATH);
+                Pushraven.setCredential(fcmCredentialFile);
+                Pushraven.setProjectId(PusherProperty.FCM_PROJECT_ID);
 
                 HashMap<String, String> data = new HashMap<String, String>();
                 data.put("title", senderUsername);
