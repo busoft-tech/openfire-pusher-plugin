@@ -205,7 +205,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <textarea name="ios" cols="70" rows="10"></textarea>
+                                <textarea name="apns" cols="70" rows="10"></textarea>
                             </td>
                         </tr>
                     </tbody>
