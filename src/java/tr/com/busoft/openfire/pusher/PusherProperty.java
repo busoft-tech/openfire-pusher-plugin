@@ -33,31 +33,35 @@ public class PusherProperty implements PropertyEventListener
     public void propertySet(String property, Map<String, Object> params)
     {
         Object value = params.get("value");
-        Log.debug("Property :{}: has been set new value: {}", property, value);
         switch (property)
         {
             case PROPERTY_NAME_FCM_PROJECT_ID:
             {
+                Log.debug("Property :{}: has been set new value: {}", property, value);
                 FCM_PROJECT_ID = (String) value;
                 break;
             }
             case PROPERTY_NAME_APNS_TEAM_ID:
             {
+                Log.debug("Property :{}: has been set new value: {}", property, value);
                 APNS_TEAM_ID = (String) value;
                 break;
             }
             case PROPERTY_NAME_APNS_KEY:
             {
+                Log.debug("Property :{}: has been set new value: {}", property, value);
                 APNS_KEY = (String) value;
                 break;
             }
             case PROPERTY_NAME_APNS_BUNDLE_ID:
             {
+                Log.debug("Property :{}: has been set new value: {}", property, value);
                 APNS_BUNDLE_ID = (String) value;
                 break;
             }
             case PROPERTY_NAME_APNS_SANDBOX:
             {
+                Log.debug("Property :{}: has been set new value: {}", property, value);
                 APNS_SANDBOX_ENABLED = (Boolean) value;
                 break;
             }
@@ -67,31 +71,35 @@ public class PusherProperty implements PropertyEventListener
     @Override
     public void propertyDeleted(String property, Map<String, Object> params)
     {
-        Log.debug("Property :{}: has been deleted", property);
         switch (property)
         {
             case PROPERTY_NAME_FCM_PROJECT_ID:
             {
+                Log.debug("Property :{}: has been deleted", property);
                 FCM_PROJECT_ID = null;
                 break;
             }
             case PROPERTY_NAME_APNS_TEAM_ID:
             {
+                Log.debug("Property :{}: has been deleted", property);
                 APNS_TEAM_ID = null;
                 break;
             }
             case PROPERTY_NAME_APNS_KEY:
             {
+                Log.debug("Property :{}: has been deleted", property);
                 APNS_KEY = null;
                 break;
             }
             case PROPERTY_NAME_APNS_BUNDLE_ID:
             {
+                Log.debug("Property :{}: has been deleted", property);
                 APNS_BUNDLE_ID = null;
                 break;
             }
             case PROPERTY_NAME_APNS_SANDBOX:
             {
+                Log.debug("Property :{}: has been deleted", property);
                 APNS_SANDBOX_ENABLED = false;
                 break;
             }
