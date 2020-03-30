@@ -198,6 +198,19 @@ public class PusherManager
         return JiveGlobals.getProperty(property, "");
     }
 
+    public static void setAndroidSettings(String projectId)
+    {
+        JiveGlobals.setProperty(PusherProperty.PROPERTY_NAME_FCM_PROJECT_ID, projectId);
+    }
+
+    public static void setIosSettings(String bundleId, String key, String teamId, String sandbox)
+    {
+        JiveGlobals.setProperty(PusherProperty.PROPERTY_NAME_APNS_BUNDLE_ID, bundleId);
+        JiveGlobals.setProperty(PusherProperty.PROPERTY_NAME_APNS_KEY, key);
+        JiveGlobals.setProperty(PusherProperty.PROPERTY_NAME_APNS_TEAM_ID, teamId);
+        JiveGlobals.setProperty(PusherProperty.PROPERTY_NAME_APNS_SANDBOX, sandbox);
+    }
+
     public static void writeCredentialFileContent(String content, String type)
     {
         // Write data out to conf/pusher.p8 file.
